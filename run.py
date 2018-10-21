@@ -16,15 +16,22 @@ def listen(song=None, start_play_time=0, play_time=0):
     """
     current_time = int(time.time() * 1000)  # 开始播放时间
     if song is not None:
-        cloud_music_logger.play(song['id'], song['artists'][0]['id'], play_time, song['privilege']['fee'], 'userfm',
-                                start_play_time, alg=song['alg'])
-        write_log('听了一首%s' % song['name'])
+        cloud_music_logger.play(song['id'],
+                                song['artists'][0]['id'],
+                                play_time,
+                                'privilege' in song and song['privilege']['fee'] or 0,
+                                'userfm',
+                                start_play_time,
+                                alg=song['alg'])
+        write_log('《听了一首》%s' % song['name'])
 
     song = next(song_generator)
     if int(args.play_time) <= 0:
         play_time = int(song['duration'] / 1000)
     else:
         play_time = int(args.play_time)
+    # 真的拉歌曲地址
+    cloud_music_api.player_url((str(song['id']),))
     s.enter(play_time, 0, listen, (song, current_time, play_time))
 
 
@@ -72,7 +79,7 @@ if __name__ == '__main__':
 
     cfg = ConfigObj('config.ini')
 
-    cloud_music_api = CloudMusicApi(proxy='http://127.0.0.1:8888')
+    cloud_music_api = CloudMusicApi()
     user_info = cloud_music_api.user_info()
     # 判断是否已登录过
     if user_info['code'] != 200:

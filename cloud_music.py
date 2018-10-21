@@ -106,7 +106,7 @@ class CloudMusicApi:
     def player_url(self, song_ids, br=320000):
         """
         获取播放地址
-        :param list song_ids: 歌曲ID列表
+        :param tuple(str) song_ids: 歌曲ID列表
         :param int br: 歌曲码率
         :return dict:
         """

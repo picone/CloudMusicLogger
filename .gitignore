@@ -1,4 +1,6 @@
 /.cookie
 /.idea
 /venv
+/config.ini
+.DS_Store
 __pycache__
