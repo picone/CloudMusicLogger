@@ -60,6 +60,16 @@ def logger():
     s.enter(600, 0, logger)  # 每10分钟上报一次日志
 
 
+def get_listen_song_count():
+    """
+    获取最新听歌数量
+    """
+    user_detail = cloud_music_api.user_detail()
+    if user_detail is not None and 'listenSongs' in user_detail:
+        write_log('您目前听歌量为%d' % user_detail['listenSongs'])
+    s.enter(1800, 0, get_listen_song_count)
+
+
 def write_log(log):
     """
     打日志
@@ -93,6 +103,8 @@ if __name__ == '__main__':
             print('cookie登录或邮箱登录需要选择一种，更多请看-h')
             exit(1)
         user_info = cloud_music_api.user_info()
+    else:
+        cloud_music_api.refresh_token()
     # 获取用户ID
     if 'userPoint' in user_info and 'userId' in user_info['userPoint']:
         cloud_music_api.set_user_id(user_info['userPoint']['userId'])
@@ -106,4 +118,5 @@ if __name__ == '__main__':
     song_generator = gen_song()
     s.enter(0, 0, listen)
     s.enter(600, 0, logger)
+    s.enter(1800, 0, get_listen_song_count)
     s.run()

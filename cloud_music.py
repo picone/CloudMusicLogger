@@ -92,6 +92,26 @@ class CloudMusicApi:
         resp = self._request_eapi('/eapi/v1/user/info', b'/api/v1/user/info', {})
         return resp
 
+    def user_detail(self, user_id=None):
+        """
+        获取用户详细信息
+        :param int user_id: 用户ID
+        :return dict:
+        """
+        if user_id is None:
+            user_id = self._user_id
+        gateway_path = '/eapi/v1/user/detail/' + str(user_id)
+        request_path = b'/api/v1/user/detail/' + str(user_id).encode()
+        params = {
+            'userId': user_id,
+            'all': 'true',
+        }
+        resp = self._request_eapi(gateway_path, request_path, params)
+        if resp is not None and resp['code'] == 200:
+            return resp
+        else:
+            return None
+
     def radio_get(self):
         """
         获取私人fm列表
